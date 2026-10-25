@@ -1,7 +1,7 @@
 """End-to-end demo: copy an example into a temp git repo, run init, apply the fix, run check.
 
-Usage: python examples/run_example.py python|js-ts
-Exits with FixProof's exit code (0 = VERIFIED).
+Usage: python3 examples/run_example.py python|js-ts|ts
+Exits with FixProof's exit code (0 = VERIFIED). The ts example needs Node's built-in type stripping.
 """
 import os
 import shutil
@@ -17,7 +17,7 @@ CFG = {
                "repro": PY + " -m unittest test_slugify", "suite": PY + " -m unittest test_other"},
     "js-ts": {"bug": "sum.js", "fixed": "sum_fixed.js",
               "repro": "node --test sum.test.js", "suite": "node --test empty.test.js"},
-    # TypeScript via Node's built-in type stripping (Node >= 23.6; no npm install)
+    # TypeScript via Node's built-in type stripping (no npm install).
     "ts": {"bug": "price.ts", "fixed": "price_fixed.ts",
            "repro": "node --test price.test.ts", "suite": "node --test zero.test.ts"},
 }
