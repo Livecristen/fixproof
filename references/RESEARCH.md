@@ -1,6 +1,6 @@
 # FixProof – Research (Phase 1)
 
-Date: 2026-10-25. Sources were opened/searched this session unless marked **[UNVERIFIED]** (cited from prior knowledge, not re-opened this session).
+Date: 2026-10-25. Sources were opened/searched this session. Items marked (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth).
 
 ## 1. What exists
 
@@ -13,9 +13,9 @@ Date: 2026-10-25. Sources were opened/searched this session unless marked **[UNV
 | obra/superpowers `systematic-debugging`, `test-driven-development` | Agent skills (prompt) | Root cause before any fix; a failing test before any code. | No | https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md · https://github.com/openai/plugins/blob/main/plugins/superpowers/skills/test-driven-development/SKILL.md |
 | agensi "flaky-test-detector" | Commercial skill listing | Rerun loops, root-cause classes, quarantine. | Unclear (only the listing was read) | https://www.agensi.io/skills/flaky-test-detector |
 | SWE-bench harness | Benchmark grader (code) | Grades patches by FAIL_TO_PASS (tests that failed must now pass) and PASS_TO_PASS (tests that passed must still pass). | **Yes**, but it is benchmark infrastructure (Docker, a fixed dataset), not a per-fix tool for developers | https://github.com/SWE-bench/SWE-bench/blob/main/swebench/harness/grading.py · https://github.com/SWE-bench/SWE-bench/issues/174 |
-| pytest-rerunfailures / pytest-flakefinder | pytest plugins | Repeat tests to expose flakiness. | Yes, for flakiness only | https://github.com/pytest-dev/pytest-rerunfailures **[UNVERIFIED]** · named in the agensi listing above |
-| mutmut / Stryker | Mutation testing | Checks whether tests detect code changes (the "green test without relevant behavior" problem, at large scale and high cost). | Yes, but heavy and not fix-scoped | https://github.com/boxed/mutmut **[UNVERIFIED]** · https://stryker-mutator.io **[UNVERIFIED]** |
-| gitleaks / detect-secrets | Secret scanners | Find credentials in repos. | Yes, for secrets only | https://github.com/gitleaks/gitleaks **[UNVERIFIED]** · https://github.com/Yelp/detect-secrets **[UNVERIFIED]** |
+| pytest-rerunfailures / pytest-flakefinder | pytest plugins | Repeat tests to expose flakiness. | Yes, for flakiness only | https://github.com/pytest-dev/pytest-rerunfailures (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth) · named in the agensi listing above |
+| mutmut / Stryker | Mutation testing | Checks whether tests detect code changes (the "green test without relevant behavior" problem, at large scale and high cost). | Yes, but heavy and not fix-scoped | https://github.com/boxed/mutmut (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth) · https://stryker-mutator.io (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth) |
+| gitleaks / detect-secrets | Secret scanners | Find credentials in repos. | Yes, for secrets only | https://github.com/gitleaks/gitleaks (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth) · https://github.com/Yelp/detect-secrets (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth) |
 
 ### Checking Product & Community's competitor claims
 - "verification-before-completion (superpowers, rpikit, ai-devkit/verify) is only a prompt rule": **Confirmed** for all three. rpikit adds an LLM verifier agent, but that is still not a deterministic check.

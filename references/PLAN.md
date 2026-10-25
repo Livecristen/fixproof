@@ -22,6 +22,14 @@ The CLI runs every command itself, using subprocess with a timeout. Agents never
 6. Check that the tree hash after restore equals the snapshot. If not, the result is BLOCKED, the report contains the recovery instructions, and exit code 5.
 7. If the repro **passes without the fix**, the result is **at most UNVERIFIED** (the test does not depend on the fix).
 
+## Dirty-tree safety (added on Director request)
+- The revert test runs only when the working tree is clean **or fully backed up**. It must never lose uncommitted user changes.
+- Implemented: before any modification the CLI copies every file it will touch to `.fixproof/backup/` (hash-verified) and records a
+  sha256 fingerprint of ALL tracked + untracked (non-ignored) files. After the revert run it restores raw bytes and compares
+  the full fingerprint. Mismatch → exit 5, backup kept.
+- If a safe backup is impossible (unmerged paths / merge or rebase in progress, snapshot or backup write fails) → **BLOCKED**, nothing modified.
+- As implemented, the revert writes baseline file contents directly (`git cat-file --filters`) instead of `git apply -R`, so CRLF/autocrlf setups restore byte-exactly.
+
 ## Status rules (documented in SKILL.md and enforced in code)
 | Status | Rule |
 |---|---|
@@ -54,6 +62,8 @@ Before writing anything, redact patterns (AWS keys, GitHub/Slack tokens, `Bearer
 | 6 | regression in the suite | FAILED / 1 |
 | 7 | flaky test (random pass/fail, seeded) | UNVERIFIED / 3, with "flaky" noted |
 | 8 | missing environment (required env var/tool absent) | BLOCKED / 4 |
+| 10 | dirty tree that cannot be safely backed up (unmerged paths) | BLOCKED / 4, all files byte-identical afterwards |
+| 11 | dirty tree with uncommitted + untracked user changes (backup possible) | VERIFIED / 0, all files byte-identical afterwards |
 | 9 | output contains secrets | report contains no secret string (asserted by grep), and `[REDACTED]` is present |
 Also: a tampered report fails `validate`, and after every revert test the tree is byte-identical (`git status --porcelain` + tree hash).
 
@@ -66,6 +76,7 @@ Also: a tampered report fails `validate`, and after every revert test the tree i
 - AC6: Scenario 9 finds 0 occurrences of the seeded secrets in `.fixproof/` and in the report.
 - AC7: The examples in `examples/python` (pytest or unittest) and `examples/js-ts` (`node --test`, no npm install needed) reach VERIFIED end-to-end in CI.
 - AC8: Install = `git clone` + copy one folder. The README has one command per agent. A fresh clone runs `python scripts/verify.py --help` with no install step.
+- AC10: Dirty tree: unsafe → BLOCKED with zero bytes changed; safe → revert runs and all user files are byte-identical afterwards (tests 10, 11; CRLF content included).
 - AC9: The docs contain none of the words "first", "only" or "unforgeable" (a CI grep check).
 
 ## Risks / open points
