@@ -35,6 +35,12 @@ class Meta(unittest.TestCase):
             text = open(os.path.join(ROOT, f), encoding="utf-8").read()
             self.assertIsNone(bad.search(text), "%s: %s" % (f, bad.findall(text)))
 
+    def test_version_file_matches_cli(self):
+        with open(os.path.join(ROOT, "VERSION"), encoding="utf-8") as fh:
+            ver = fh.read().strip()
+        src = open(os.path.join(ROOT, "scripts", "verify.py"), encoding="utf-8").read()
+        self.assertIn('VERSION = "%s"' % ver, src)
+
     def test_readme_example_report_validates(self):
         """The README sample is a real report: validate recomputes VERIFIED."""
         with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
@@ -48,7 +54,7 @@ class Meta(unittest.TestCase):
         body = chunk[start:chunk.index("\n```", start)]
         rep = json.loads(body)
         self.assertEqual(rep["tool"], "fixproof")
-        self.assertEqual(rep["version"], "0.2.0")  # sample recorded with 0.2.0
+        self.assertEqual(rep["version"], "0.3.0")
         self.assertEqual(rep["status"], "VERIFIED")
         self.assertEqual(rep["exit_code"], 0)
         for needle in ("/tmp/", "/home/", "/usr/", "/Users/"):
