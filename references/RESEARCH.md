@@ -1,3 +1,5 @@
+> **INTERNAL – not part of the release.** See references/README.md.
+
 # FixProof – Research (Phase 1)
 
 Date: 2026-10-25. Sources were opened/searched this session. Items marked (URL verified reachable, HTTP 200, 2026-10-25; content not reviewed in depth).
@@ -6,9 +8,9 @@ Date: 2026-10-25. Sources were opened/searched this session. Items marked (URL v
 
 | Tool | Type | What it does | Machine-checks evidence? | Source |
 |---|---|---|---|---|
-| obra/superpowers `verification-before-completion` | Agent skill (prompt) | "Iron Law": no completion claim without fresh command output; 5-step gate (identify, run, read, verify, claim). Its "Key Patterns" also describe a red-green regression check: write, run (pass), revert fix, run (MUST FAIL), restore, run (pass). | No, it is instructions to the agent only | https://github.com/obra/superpowers/tree/main/skills/verification-before-completion · mirror: https://github.com/openai/plugins/blob/main/plugins/superpowers/skills/verification-before-completion/SKILL.md |
+| obra/superpowers `verification-before-completion` | Agent skill (prompt) | A central rule that the agent may not claim completion unless it has just run the proving command; a five-step gate (pick the command, run it, read the output, compare it with the claim, then state it). Its pattern section also recommends a red-green check for regression tests: confirm the test passes with the fix, fails once the fix is undone, and passes again after it is restored. | No, it is instructions to the agent only | https://github.com/obra/superpowers/tree/main/skills/verification-before-completion · mirror: https://github.com/openai/plugins/blob/main/plugins/superpowers/skills/verification-before-completion/SKILL.md |
 | bostonaholic/rpikit `verification-before-completion` + `verifier` agent | Skill + LLM sub-agent | Same 5-step gate; a "Before claiming Fixed" checklist; the verifier agent runs format/lint/typecheck/build/tests and gives PASS/FAIL/WARN, which its own docs call "advisory". | No, the verdict comes from an LLM agent (`model: haiku`) | https://github.com/bostonaholic/rpikit/blob/main/skills/verification-before-completion/SKILL.md · https://github.com/bostonaholic/rpikit/blob/main/agents/verifier.md |
-| codeaholicguy/ai-devkit `verify` | Agent skill (prompt) | 5-step gate, forbidden words ("should", "probably", …), explicit 6-step regression check that reverts the fix ("If step 4 passes, the test is wrong"). | No | https://github.com/codeaholicguy/ai-devkit/blob/main/skills/verify/SKILL.md · https://ai-devkit.com/skills/verify/ |
+| codeaholicguy/ai-devkit `verify` | Agent skill (prompt) | 5-step gate, a list of hedging words to avoid in completion claims, and an explicit six-step regression check that undoes the fix and treats a still-passing test as a broken test. | No | https://github.com/codeaholicguy/ai-devkit/blob/main/skills/verify/SKILL.md · https://ai-devkit.com/skills/verify/ |
 | silkyland/reproduce-my-bug | Agent skill (prompt), MIT | Never fixes. Intake, evidence sweep, ranked hypotheses, minimal failing test, flaky protocol, then a `REPRO.md` dossier. Outcomes: DETERMINISTIC / RATE-BASED / NOT-YET-REPRODUCED. Repo created 2026-07-06, 0 stars at fetch time. | No | https://github.com/silkyland/reproduce-my-bug · https://www.skills.sh/silkyland/reproduce-my-bug/reproduce-my-bug |
 | obra/superpowers `systematic-debugging`, `test-driven-development` | Agent skills (prompt) | Root cause before any fix; a failing test before any code. | No | https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md · https://github.com/openai/plugins/blob/main/plugins/superpowers/skills/test-driven-development/SKILL.md |
 | agensi "flaky-test-detector" | Commercial skill listing | Rerun loops, root-cause classes, quarantine. | Unclear (only the listing was read) | https://www.agensi.io/skills/flaky-test-detector |
@@ -19,7 +21,7 @@ Date: 2026-10-25. Sources were opened/searched this session. Items marked (URL v
 
 ### Checking Product & Community's competitor claims
 - "verification-before-completion (superpowers, rpikit, ai-devkit/verify) is only a prompt rule": **Confirmed** for all three. rpikit adds an LLM verifier agent, but that is still not a deterministic check.
-- "ai-devkit also asks for a revert test": **Confirmed. Correction:** superpowers asks for it too (in its Key Patterns: "Revert fix → Run (MUST FAIL)"). Neither one enforces it by machine.
+- "ai-devkit also asks for a revert test": **Confirmed. Correction:** superpowers recommends it too (its pattern section describes undoing the fix and expecting the test to fail). Neither one enforces it by machine.
 - "reproduce-my-bug only reproduces and never fixes; REPRO.md; DETERMINISTIC / RATE-BASED / NOT-YET-REPRODUCED": **Confirmed** from the README.
 - "Nothing checks the evidence by machine": **Confirmed for the agent-skill ecosystem we checked.** It is **not true in general**: SWE-bench grading, mutation testing and flaky-test plugins check parts of this by machine. Our wording must stay limited to "agent fix-verification skills". We only searched the sources listed above, so this is not an exhaustive market survey.
 

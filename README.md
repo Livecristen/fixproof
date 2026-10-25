@@ -27,8 +27,16 @@ python verify.py init  --repro "python -m pytest tests/test_bug.py" --suite "pyt
 # ... apply the fix ...
 python verify.py check            # status + .fixproof/report.json, exit code = status
 python verify.py validate .fixproof/report.json
+python verify.py restore          # after an interrupted run: put backed-up files back
 ```
-Options: `--reruns N`, `--timeout S`, `--require-env VAR`, `--require-tool TOOL`, `--test-glob GLOB`, `--no-revert`, `--json PATH`.
+Options: `--reruns N`, `--timeout S`, `--require-env VAR`, `--require-tool TOOL`, `--pass-env VAR`, `--no-shell`,
+`--allow-exe NAME`, `--test-glob GLOB`, `--no-revert`, `--revert-mode worktree`, `--include-ignored`, `--dry-run`,
+`--discard-backup`, `--json .fixproof/NAME.json`.
+
+**Warning:** the revert test temporarily modifies files in your working tree. FixProof prints a WARNING with the file
+list and backup path before it touches anything, and warns on protected-looking branches (main/master/release/prod),
+configured remotes and root. Use `check --dry-run` to preview, or `check --revert-mode worktree` to run the revert test
+in a temporary git worktree instead (ignored files such as `node_modules` are not present there).
 
 ## How a fix becomes VERIFIED
 1. Baseline: the repro command fails on the unfixed tree (and not because of a timeout or a missing tool).
@@ -53,3 +61,5 @@ Git repositories are required. Test/fix separation uses path globs. Suite regres
 
 ## License
 MIT. See [LICENSE](LICENSE).
+
+Not affiliated with Anthropic, OpenAI or Anysphere; names are trademarks of their owners.

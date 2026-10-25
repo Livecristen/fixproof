@@ -1,3 +1,5 @@
+> **INTERNAL – not part of the release.** See references/README.md.
+
 # FixProof – Architecture Plan (Phase 1, needs Director OK)
 
 ## Scope (MVP, v1)

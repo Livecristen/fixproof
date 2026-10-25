@@ -7,7 +7,7 @@ import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALLOWED = {"argparse", "datetime", "fnmatch", "hashlib", "json", "os", "re", "shutil",
-           "signal", "subprocess", "sys", "tempfile", "time"}
+           "shlex", "signal", "subprocess", "sys", "tempfile", "time"}
 
 
 class Meta(unittest.TestCase):

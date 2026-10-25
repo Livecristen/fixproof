@@ -146,7 +146,7 @@ class Scenarios(Base):
                          "import unittest\n", "import unittest\n" + flaky, 1)})
         os.environ["FP_COUNTER"] = counter
         try:
-            self.fp("init", "--repro", REPRO, "--suite", SUITE)
+            self.fp("init", "--repro", REPRO, "--suite", SUITE, "--pass-env", "FP_COUNTER")
             write(self.root, "calc.py", FIXED)
             rc, _ = self.fp("check", "--reruns", "4")
         finally:
@@ -167,7 +167,7 @@ class Scenarios(Base):
                      "test_calc.py": "import os\nprint('token=%s')\nprint('db', os.environ['FP_DB_PASSWORD'])\n" % secret_tok + TEST_ADD})
         os.environ["FP_DB_PASSWORD"] = env_secret
         try:
-            self.fp("init", "--repro", REPRO, "--suite", SUITE)
+            self.fp("init", "--repro", REPRO, "--suite", SUITE, "--pass-env", "FP_DB_PASSWORD")
             write(self.root, "calc.py", FIXED)
             rc, _ = self.fp("check")
         finally:
@@ -219,7 +219,7 @@ class Guards(Base):
         i = [n for n, r in enumerate(rep["records"]) if r.get("label") == "after_repro"][0]
         for mutate in (lambda r: r.update(status="VERIFIED", exit_code=0),
                        lambda r: r["records"][i].update(outcome="pass"),
-                       lambda r: r["records"][i].update(stderr_tail="OK"),
+                       lambda r: r["records"][i].update(untrusted_stderr_tail="OK"),
                        lambda r: r["records"].pop(-1)):
             bad = json.loads(json.dumps(rep))
             mutate(bad)
@@ -231,7 +231,7 @@ class Guards(Base):
         RESULTS.append(("12 tampered report (4 mutations)", "UNVERIFIED", 3, "validate: integrity mismatch"))
 
     def test_13_restore_mismatch_detected(self):
-        script = ("import os, sys\nif os.path.isdir('.fixproof/backup'):\n    open('sneaky.txt','w').write('x')\n"
+        script = ("import os, sys\nimport glob\nif glob.glob('.fixproof/backup-*'):\n    open('sneaky.txt','w').write('x')\n"
                   "from calc import add\nsys.exit(0 if add(2,3)==5 else 1)\n")
         self.commit({"calc.py": BUGGY, "repro.py": script, "test_other.py": TEST_SUB})
         self.fp("init", "--repro", PY + " repro.py", "--suite", SUITE)
@@ -244,7 +244,7 @@ class Guards(Base):
             self.assertEqual(fh.read(), FIXED)
 
     def test_14_timeout_during_revert_restores(self):
-        script = ("import os, sys, time\nif os.path.isdir('.fixproof/backup'):\n    time.sleep(30)\n"
+        script = ("import os, sys, time\nimport glob\nif glob.glob('.fixproof/backup-*'):\n    time.sleep(30)\n"
                   "from calc import add\nsys.exit(0 if add(2,3)==5 else 1)\n")
         self.commit({"calc.py": BUGGY, "repro.py": script, "test_other.py": TEST_SUB})
         self.fp("init", "--repro", PY + " repro.py", "--suite", SUITE, "--timeout", "3")
