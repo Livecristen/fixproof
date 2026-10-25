@@ -36,6 +36,16 @@ git clone https://github.com/Livecristen/fixproof.git .cursor/skills/fixproof
 python3 .cursor/skills/fixproof/scripts/verify.py --version
 ```
 
+On Windows PowerShell 5.1, `~` in an argument to a native command such as `git` is not expanded. The bash commands above then clone into a folder literally named `~` inside the current directory. `python3 ~/...` still resolves that relative path, so `--version` prints the version and nothing looks wrong, but the agent never finds the skill. This was observed on 2026-10-26 with PowerShell 5.1.26100 and git 2.55.0.windows.3. Use `$HOME` in PowerShell instead:
+
+```powershell
+# Codex (the same pattern applies to .claude\skills)
+git clone https://github.com/Livecristen/fixproof.git "$HOME\.codex\skills\fixproof"
+python "$HOME\.codex\skills\fixproof\scripts\verify.py" --version
+```
+
+That clone printed `Cloning into 'C:\Users\<user>\.codex\skills\fixproof'...`, and `--version` printed `0.3.0`.
+
 On Windows, and in the GitHub Actions images this repository uses, the interpreter command is `python`. The machine used to check this README has `python3` and does not have `python`.
 
 From a checkout, `python3 scripts/verify.py --help` lists `init`, `check`, `restore`, and `validate`. `python3 scripts/verify.py --version` prints `0.3.0`. With no subcommand the process exits 64 and prints the help. `python3 scripts/verify.py init` with no `--repro` prints `verify.py init: error: the following arguments are required: --repro` and exits 64.
