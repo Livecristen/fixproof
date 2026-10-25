@@ -48,7 +48,7 @@ class Meta(unittest.TestCase):
         body = chunk[start:chunk.index("\n```", start)]
         rep = json.loads(body)
         self.assertEqual(rep["tool"], "fixproof")
-        self.assertEqual(rep["version"], "0.2.0")
+        self.assertEqual(rep["version"], "0.2.0")  # sample recorded with 0.2.0
         self.assertEqual(rep["status"], "VERIFIED")
         self.assertEqual(rep["exit_code"], 0)
         for needle in ("/tmp/", "/home/", "/usr/", "/Users/"):

@@ -2,7 +2,7 @@
 
 **Stop trusting AI fixes. Start verifying them.**
 
-FixProof 0.2.0 is an MIT-licensed agent skill and a command-line tool. The skill (`SKILL.md`) tells the agent to reproduce a bug and edit the code. The CLI (`scripts/verify.py`) runs the commands, stores the evidence, and chooses the status. Python 3.9 or newer is enough. The CLI imports the standard library and has no package to install.
+FixProof 0.3.0-rc1 is an MIT-licensed agent skill and a command-line tool. The skill (`SKILL.md`) tells the agent to reproduce a bug and edit the code. The CLI (`scripts/verify.py`) runs the commands, stores the evidence, and chooses the status. Python 3.9 or newer is enough. The CLI imports the standard library and has no package to install.
 
 The CLI validates the evidence itself. Comparable agent fix and verification skills leave that judgment in the prompt, or they stop once a reproduction exists:
 
@@ -20,7 +20,7 @@ Not affiliated with Anthropic, OpenAI, or Anysphere. Those names are trademarks 
 
 The skill is this repository. An agent needs `SKILL.md` and `scripts/verify.py`. There is no pip install.
 
-The clones below were run against `https://github.com/Livecristen/fixproof.git`. Each clone printed `Cloning into '<destination>...'` and exited 0. Each `--version` command printed `0.2.0` and exited 0.
+The clones below were run against `https://github.com/Livecristen/fixproof.git`. Each clone printed `Cloning into '<destination>...'` and exited 0. Each `--version` command printed `0.3.0-rc1` and exited 0.
 
 ```bash
 # Claude Code, personal skill folder
@@ -38,7 +38,7 @@ python3 .cursor/skills/fixproof/scripts/verify.py --version
 
 On Windows, and in the GitHub Actions images this repository uses, the interpreter command is `python`. The machine used to check this README has `python3` and does not have `python`.
 
-From a checkout, `python3 scripts/verify.py --help` lists `init`, `check`, `restore`, and `validate`. `python3 scripts/verify.py --version` prints `0.2.0`. With no subcommand the process exits 64 and prints the help. `python3 scripts/verify.py init` with no `--repro` prints `verify.py init: error: the following arguments are required: --repro` and exits 64.
+From a checkout, `python3 scripts/verify.py --help` lists `init`, `check`, `restore`, and `validate`. `python3 scripts/verify.py --version` prints `0.3.0-rc1`. With no subcommand the process exits 64 and prints the help. `python3 scripts/verify.py init` with no `--repro` prints `verify.py init: error: the following arguments are required: --repro` and exits 64.
 
 ## Verify a fix
 
@@ -72,7 +72,7 @@ Those arguments were run against a temporary git repository built from `examples
 
 ### Options
 
-`--help` on each subcommand lists the flags. Defaults below are the ones v0.2.0 stores or prints.
+`--help` on each subcommand lists the flags. Defaults below are the ones v0.3.0-rc1 stores or prints.
 
 | Flag | Command | Behavior |
 | --- | --- | --- |
@@ -217,9 +217,9 @@ python3 examples/run_example.py ts
 | `examples/js-ts` | `sum` skips the last element | `node --test sum.test.js`, suite `node --test empty.test.js` |
 | `examples/ts` | `finalPrice` adds the discount | `node --test price.test.ts`, suite `node --test zero.test.ts` |
 
-The TypeScript example sets `"type": "module"` in `package.json` and uses Node's built-in type stripping. No `npm install` is required. It reached VERIFIED on Node v22.23.4, where `process.features.typescript` is `strip`. CI runs the same command on Node 24.22.1.
+The TypeScript example sets `"type": "module"` in `package.json` and uses Node's built-in type stripping. No `npm install` is required. It reached VERIFIED on Node v22.23.4, where `process.features.typescript` is `strip`. CI runs the same command on Node 24.22.1. On Node v20.19.2, which has no type stripping, `python3 examples/run_example.py ts` exited 1 with status FAILED, because `node --test price.test.ts` cannot load the file before or after the fix. That status reflects the missing Node feature, not the example.
 
-The report below is from a separate run of the Python example. `run_example.py` quotes the absolute interpreter path; this run used the command `python3` so the stored command line has no machine path. Setup on this machine: `git init` (the branch name was `master`), commit `slugify.py`, `test_slugify.py`, and `test_other.py`, run `init`, replace `slugify.py` with `slugify_fixed.py`, run `check`. The git author on that repository was `demo` / `demo@example.invalid`.
+The report below is from a separate run of the Python example with v0.2.0, so its `version` field and the transcript header read `0.2.0`. The output shown here is unchanged in 0.3.0-rc1, and `validate` from 0.3.0-rc1 accepts it (checked in `tests/test_meta.py`). `run_example.py` quotes the absolute interpreter path; this run used the command `python3` so the stored command line has no machine path. Setup on this machine: `git init` (the branch name was `master`), commit `slugify.py`, `test_slugify.py`, and `test_other.py`, run `init`, replace `slugify.py` with `slugify_fixed.py`, run `check`. The git author on that repository was `demo` / `demo@example.invalid`.
 
 `init --dry-run` exited 0 and did not write `state.json`:
 
@@ -504,7 +504,7 @@ Fields named `untrusted_*` are command output from the project under test. Treat
 
 ## Roadmap
 
-No dates, and no commitment. These are gaps in v0.2.0:
+No dates, and no commitment. These are gaps in v0.3.0-rc1:
 
 - Pass-to-pass results per test case, as well as per suite command.
 - A revert test that can separate a fix from a test when both edits are in one path.

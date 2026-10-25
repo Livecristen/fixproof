@@ -24,7 +24,7 @@ import sys
 import tempfile
 import time
 
-VERSION = "0.2.0"
+VERSION = "0.3.0-rc1"
 STATE_DIR = ".fixproof"
 
 EXIT = {
@@ -620,7 +620,8 @@ def restore_files(root, backup_dir, manifest):
 def revert_in_worktree(root, state, args, log, cur_tree, fix, tests_changed, opts):
     """Run the revert test in a temporary git worktree; the user's working tree is never modified.
     Caveat: ignored files (node_modules, venvs, build output) are absent there."""
-    commit = git(root, "commit-tree", cur_tree, "-m", "fixproof temp").strip()
+    commit = git(root, "-c", "user.name=FixProof", "-c", "user.email=fixproof@localhost.invalid",
+                 "commit-tree", cur_tree, "-m", "fixproof temp").strip()
     tmp = tempfile.mkdtemp(prefix="fixproof-wt-")
     os.rmdir(tmp)
     run = None

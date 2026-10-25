@@ -244,6 +244,26 @@ class P3(Base):
         self.assertNotIn("fixproof-wt", sh(["git", "worktree", "list"], self.root).stdout.decode())
         RESULTS.append(("P3.11 --revert-mode worktree", "VERIFIED", 0, "user tree untouched"))
 
+    def test_p3_11_worktree_mode_without_git_identity(self):
+        """Worktree mode must not need a configured git user (temp commit-tree)."""
+        self.std_repo()
+        for key in ("user.name", "user.email"):
+            sh(["git", "config", "--local", "--unset-all", key], self.root, check=False)
+        env = dict(os.environ, GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+        for k in ("GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL", "EMAIL"):
+            env.pop(k, None)
+        def run(*a):
+            p = subprocess.run([sys.executable, VERIFY] + list(a), cwd=self.root, env=env,
+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            return p.returncode, p.stdout.decode("utf-8", "replace")
+        rc, out = run("init", "--repro", REPRO, "--suite", SUITE)
+        self.assertEqual(rc, 0, out)
+        write(self.root, "calc.py", FIXED)
+        rc, out = run("check", "--revert-mode", "worktree")
+        self.assertEqual(rc, 0, out)
+        self.assertNotIn("Author identity unknown", out)
+        RESULTS.append(("P3.11 worktree mode, no git identity", "VERIFIED", 0, "temp commit uses fixed identity"))
+
     def test_p3_12_json_path_restricted(self):
         self.std_repo()
         rc, out = self.fp("init", "--repro", REPRO, "--json", os.path.join(self.root, "README.md"))

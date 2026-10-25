@@ -10,9 +10,10 @@ Install: one folder (`SKILL.md` + `scripts/verify.py`), with one `git clone` com
 ```
 verify.py init     --repro "<cmd>" [--suite "<cmd>"]   # records baseline on the unfixed tree (git HEAD/diff hash)
 verify.py check    # after the fix: runs repro (must now pass), suite (regressions), revert test, flaky reruns
-verify.py report   [--json out.json]                   # renders + validates the evidence file
 verify.py validate report.json                         # re-checks a report's integrity/consistency
 ```
+(There is no `report` subcommand: `init` and `check` write the report to `.fixproof/report.json`, or to `--json .fixproof/<name>.json`; `validate` re-checks it. Subcommands are `init`, `check`, `restore`, `validate`.)
+
 The CLI runs every command itself, using subprocess with a timeout. Agents never supply results. It stores evidence in `.fixproof/` as `runs.jsonl`: per run the cmd, cwd, start/end time, exit code, duration, sha256 of stdout/stderr, a redacted tail, the git tree state, and a hash chain (each record holds the hash of the previous one).
 
 ## Revert test (required)
@@ -74,7 +75,7 @@ Also: a tampered report fails `validate`, and after every revert test the tree i
 - AC2: All 9 scenarios plus the tamper and restore tests pass in CI (GitHub Actions matrix: ubuntu + windows, Python 3.9 & 3.13).
 - AC3: Each scenario produces the exact status and exit code in the table above, 10 out of 10 consecutive CI-equivalent runs (seeded flaky).
 - AC4: Revert test: the tree hash before equals the tree hash after in 100% of tests, including when the repro command crashes or times out.
-- AC5: The JSON report validates against `references/report.schema.json`. `validate` detects any edit to a run record (100% of the mutation cases in the tests).
+- AC5: The JSON report validates against `references/report.schema.json` (planned; not shipped, `validate` performs the structural and chain checks). `validate` detects any edit to a run record (100% of the mutation cases in the tests).
 - AC6: Scenario 9 finds 0 occurrences of the seeded secrets in `.fixproof/` and in the report.
 - AC7: The examples in `examples/python` (pytest or unittest) and `examples/js-ts` (`node --test`, no npm install needed) reach VERIFIED end-to-end in CI.
 - AC8: Install = `git clone` + copy one folder. The README has one command per agent. A fresh clone runs `python scripts/verify.py --help` with no install step.
