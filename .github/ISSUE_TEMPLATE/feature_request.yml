@@ -1,0 +1,41 @@
+name: Feature request
+description: A change to the CLI, the skill, or the report
+title: "feature: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FixProof's status words are computed by `scripts/verify.py`. A request that changes a status should say which records lead to which word.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you cannot do with v0.2.0 today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include the status and exit code you want, if the change affects a verdict.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI status rules
+        - Revert test or working-tree safety
+        - Report format
+        - Agent skill (SKILL.md)
+        - Examples or docs
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra context
+      description: Optional. Links, constraints, or a sketch of the records involved.

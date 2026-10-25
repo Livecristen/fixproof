@@ -1,0 +1,86 @@
+name: Bug report
+description: A wrong status, a crash, or a revert-test problem
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe what the CLI did. Review anything you paste: FixProof redacts some token shapes and some environment values, and a review is still required. Security bugs belong in a private advisory, linked from the template chooser.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: Status line, exit code, and the reason lines.
+      placeholder: FixProof 0.2.0  status: FAILED  (exit 1)
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status the CLI reported
+      options:
+        - VERIFIED
+        - FAILED
+        - PARTIALLY VERIFIED
+        - UNVERIFIED
+        - BLOCKED
+        - BLOCKED with exit 5 (restore mismatch)
+        - usage error (exit 64)
+        - the process crashed
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Commands you ran
+      description: init / check / validate / restore, including flags. Omit secret values.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FixProof version
+      description: Output of `python3 scripts/verify.py --version` (or `python` where that command exists).
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - Windows
+        - macOS
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Report excerpt
+      description: Optional. Paste reasons, warnings, and relevant records. Drop or redact anything that should stay private.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: I removed secrets from the text above.
+          required: true
+        - label: This is not a security vulnerability (those go to a private advisory).
+          required: true

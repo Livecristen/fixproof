@@ -1,8 +1,11 @@
 """Stdlib-only import check and wording check for the docs."""
 import ast
+import json
 import os
 import re
+import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +34,37 @@ class Meta(unittest.TestCase):
         for f in docs:
             text = open(os.path.join(ROOT, f), encoding="utf-8").read()
             self.assertIsNone(bad.search(text), "%s: %s" % (f, bad.findall(text)))
+
+    def test_readme_example_report_validates(self):
+        """The README sample is a real report: validate recomputes VERIFIED."""
+        with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
+            text = fh.read()
+        marker = "<!-- example-report-start -->"
+        end = "<!-- example-report-end -->"
+        self.assertIn(marker, text)
+        self.assertIn(end, text)
+        chunk = text.split(marker, 1)[1].split(end, 1)[0]
+        start = chunk.index("```json\n") + len("```json\n")
+        body = chunk[start:chunk.index("\n```", start)]
+        rep = json.loads(body)
+        self.assertEqual(rep["tool"], "fixproof")
+        self.assertEqual(rep["version"], "0.2.0")
+        self.assertEqual(rep["status"], "VERIFIED")
+        self.assertEqual(rep["exit_code"], 0)
+        for needle in ("/tmp/", "/home/", "/usr/", "/Users/"):
+            self.assertNotIn(needle, body)
+        fd, path = tempfile.mkstemp(suffix=".json")
+        os.close(fd)
+        try:
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(body)
+            proc = subprocess.run(
+                [sys.executable, os.path.join(ROOT, "scripts", "verify.py"), "validate", path],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            self.assertEqual(proc.returncode, 0, proc.stdout.decode())
+            self.assertIn(b"status VERIFIED", proc.stdout)
+        finally:
+            os.remove(path)
 
 
 if __name__ == "__main__":

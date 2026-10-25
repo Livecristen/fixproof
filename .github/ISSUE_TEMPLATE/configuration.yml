@@ -1,0 +1,73 @@
+name: Configuration
+description: Install path, flags, environment, or git setup
+title: "config: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for a setup problem: where the skill is installed, which flags you passed, environment variables, or the git repository FixProof refused to touch. Paste commands with secret values removed.
+  - type: dropdown
+    id: agent
+    attributes:
+      label: How you are running FixProof
+      options:
+        - Claude Code
+        - Codex
+        - Cursor
+        - CLI, no agent
+        - other
+    validations:
+      required: true
+  - type: input
+    id: install_path
+    attributes:
+      label: Skill or CLI path
+      placeholder: ~/.claude/skills/fixproof
+    validations:
+      required: true
+  - type: textarea
+    id: flags
+    attributes:
+      label: Flags and environment
+      description: For example `--require-env`, `--pass-env`, `--no-shell`, `--revert-mode`, `--test-glob`, git branch, and whether a remote is configured. Do not paste secret values.
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What the CLI printed
+      description: Status, exit code, and warnings.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FixProof version
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - Windows
+        - macOS
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected the setup to do
+    validations:
+      required: true

@@ -14,6 +14,7 @@ Stop trusting AI fixes. Start verifying them. **The CLI checks the evidence, not
 3. **Record the failure** on the unfixed tree:
    `python <skill>/scripts/verify.py init --repro "<cmd>" --suite "<regression cmd>"`
    If it does not print `Bug reproduced`, stop and report the status it gives. Do not fix a bug you could not reproduce.
+   A run that prints `Bug reproduced` exits 0. The report file at that moment is not the fix verdict: its status is UNVERIFIED because no post-fix run is recorded yet. `check` replaces that file.
 4. **Fix** the code. Keep the regression test in a test file (`test_*.py`, `*.test.ts`, `tests/` ...).
 5. **Verify**: `python <skill>/scripts/verify.py check`
    The CLI reruns the repro (default 3x), runs the suite, then performs the **revert test**: it temporarily removes the
@@ -27,12 +28,14 @@ Stop trusting AI fixes. Start verifying them. **The CLI checks the evidence, not
 | Status | Meaning |
 |---|---|
 | VERIFIED | Baseline failed; repro passes on every rerun; repro fails again without the fix; tree restored; no suite regressions. |
-| PARTIALLY VERIFIED | Repro verified, but no suite given, suite not fully passing, revert test not possible (fix and test in the same file) or inconclusive. |
+| PARTIALLY VERIFIED | Repro verified, but no suite given, suite not fully passing, revert test not run, revert test not possible (fix and test in the same file), or revert test inconclusive. |
 | FAILED | Repro still fails after the fix, or a suite command that passed before now fails (regression). |
 | UNVERIFIED | Bug not reproduced at baseline; test also passes without the fix; zero tests ran; flaky results; report integrity mismatch. |
 | BLOCKED | Missing dependency, timeout, missing env var/tool, not a git repo, dirty tree that cannot be safely backed up, restore mismatch. |
 
 Exit codes: 0 VERIFIED, 1 FAILED, 2 PARTIALLY VERIFIED, 3 UNVERIFIED, 4 BLOCKED, 5 tree restore error, 64 usage error.
+A restore mismatch keeps the status string BLOCKED and uses exit 5.
+`validate` exits 0 when the report matches its records, including when that status is not VERIFIED. It exits 3 when the chain, the status, or the exit code does not follow from the records.
 
 ## Rules for the agent
 - Exit code 0 of a test command is **not** proof of a fix. The before/after comparison is.
