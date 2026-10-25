@@ -24,7 +24,7 @@ import sys
 import tempfile
 import time
 
-VERSION = "0.3.0-rc1"
+VERSION = "0.3.0"
 STATE_DIR = ".fixproof"
 
 EXIT = {

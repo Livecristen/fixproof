@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2026-10-25)
+
+Final release of the 0.3.0-rc1 candidate, with no CLI behavior change against rc1.
+
+- Version is 0.3.0 in `scripts/verify.py` and in the new `VERSION` file. `tests/test_meta.py` checks that the two match.
+- README: the example transcript and the sample report were regenerated from a real 0.3.0 run.
+- Release draft (#5) is retitled to v0.3.0. Its Node requirement for the TypeScript example now matches what was tested: unflagged type stripping, Node 22.18+ or 23.6+.
+
 ## 0.3.0-rc1 (2026-10-25), release candidate
 
 One CLI fix against 0.2.0. Everything else is docs, CI and dependency work.
