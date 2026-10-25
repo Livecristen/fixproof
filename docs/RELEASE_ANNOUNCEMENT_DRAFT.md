@@ -1,14 +1,14 @@
 # DRAFT — do not publish
 
-> **DRAFT.** Maintainer copy for a possible FixProof v0.2.0 note. This file has not been posted. Do not publish it to GitHub Releases, a discussion, social media, a chat, or a mailing list. Publishing this draft is not part of preparing the documentation.
+> **DRAFT.** Maintainer copy for a possible FixProof v0.3.0 note. This file has not been posted. Do not publish it to GitHub Releases, a discussion, social media, a chat, or a mailing list. Publishing this draft is not part of preparing the documentation.
 
 ## Suggested title
 
-FixProof v0.2.0
+FixProof v0.3.0
 
 ## Suggested body
 
-FixProof 0.2.0 is an MIT-licensed agent skill and a Python command-line tool that checks bug fixes with evidence the tool collected itself.
+FixProof 0.3.0 is an MIT-licensed agent skill and a Python command-line tool that checks bug fixes with evidence the tool collected itself.
 
 The skill tells the agent to reproduce the bug and edit the code. `scripts/verify.py` runs the reproduction, the suite, and a revert test, writes a hash-chained log under `.fixproof/`, and sets the status. `validate` recomputes that status from the records. The CLI needs Python 3.9 or newer and the standard library. There is no package install.
 
@@ -20,7 +20,7 @@ The log makes a hand-edited report visible: `validate` rejects a status that doe
 
 Install by cloning the repository into the agent skill folder (Claude Code, Codex, or Cursor). The README has the commands. Then run `scripts/verify.py --version`.
 
-The Python, JavaScript, and TypeScript examples are in `examples/` and are run by `examples/run_example.py`.
+The Python, JavaScript, and TypeScript examples are in `examples/` and are run by `examples/run_example.py`. The TypeScript example needs Node 22.6 or newer (built-in type stripping).
 
 Known limits, spelled out in the README: the project must be a git repository; test paths and fix paths are split by globs; suite results are per command; the in-place revert test edits the working tree until restore finishes.
 
