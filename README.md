@@ -217,7 +217,7 @@ python3 examples/run_example.py ts
 | `examples/js-ts` | `sum` skips the last element | `node --test sum.test.js`, suite `node --test empty.test.js` |
 | `examples/ts` | `finalPrice` adds the discount | `node --test price.test.ts`, suite `node --test zero.test.ts` |
 
-The TypeScript example sets `"type": "module"` in `package.json` and uses Node's built-in type stripping. No `npm install` is required. It reached VERIFIED on Node v22.23.4, where `process.features.typescript` is `strip`. CI runs the same command on Node 24.22.1. On Node v20.19.2, which has no type stripping, `python3 examples/run_example.py ts` exited 1 with status FAILED, because `node --test price.test.ts` cannot load the file before or after the fix. That status reflects the missing Node feature, not the example.
+The TypeScript example sets `"type": "module"` in `package.json` and uses Node's built-in type stripping. No `npm install` is required. Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1. On 2026-10-25 `python3 examples/run_example.py ts` was run with official Node binaries: 22.17.1 FAILED (exit 1), 22.18.0 VERIFIED (exit 0), 23.5.0 FAILED (exit 1), 23.6.0 VERIFIED (exit 0), 24.22.1 VERIFIED (exit 0). On versions without unflagged type stripping (also Node v20.19.2), `node --test price.test.ts` cannot load the file before or after the fix, so the FAILED status reflects the missing Node feature, not the example.
 
 The report below is from a separate run of the Python example with v0.3.0 (2026-10-25). `tests/test_meta.py` runs `validate` on it. `run_example.py` quotes the absolute interpreter path; this run used the command `python3` so the stored command line has no machine path. Setup on this machine: `git init` (the branch name was `master`), commit `slugify.py`, `test_slugify.py`, and `test_other.py`, run `init`, replace `slugify.py` with `slugify_fixed.py`, run `check`. The git author on that repository was `demo` / `demo@example.invalid`.
 
@@ -482,7 +482,7 @@ Fields named `untrusted_*` are command output from the project under test. Treat
 - **Python.** 3.9 or newer. CI runs 3.9 and 3.13 on `ubuntu-latest` and `windows-latest`. This README was checked on Python 3.12.3.
 - **git.** Required. The project must be a git repository. Outside one, `init` says a git repository is required in v1 and exits 4.
 - **Operating systems.** CI covers Ubuntu and Windows. macOS is not in that matrix and was not part of this documentation pass.
-- **Node.** The CLI does not use Node. The JavaScript example uses `node --test`. The TypeScript example needs built-in type stripping, as above.
+- **Node.** The CLI does not use Node. The JavaScript example uses `node --test`. The TypeScript example: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1.
 - **Agents.** Claude Code, Codex, and Cursor, via the install paths above. Any agent that can read `SKILL.md` and run the CLI can use the same folder.
 - **Network.** The CLI does not contact a service. Commands you pass run with your privileges.
 

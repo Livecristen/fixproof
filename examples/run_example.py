@@ -1,7 +1,7 @@
 """End-to-end demo: copy an example into a temp git repo, run init, apply the fix, run check.
 
 Usage: python3 examples/run_example.py python|js-ts|ts
-Exits with FixProof's exit code (0 = VERIFIED). The ts example needs Node's built-in type stripping.
+Exits with FixProof's exit code (0 = VERIFIED). The ts example: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1.
 """
 import os
 import shutil

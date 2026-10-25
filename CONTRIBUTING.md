@@ -5,7 +5,7 @@ FixProof is an agent skill (`SKILL.md`) plus `scripts/verify.py`. Changes should
 ## Setup
 
 - Python 3.9 or newer, and git.
-- Node, with built-in type stripping, if you run `examples/js-ts` or `examples/ts`. The CLI does not need Node.
+- Node if you run `examples/js-ts` or `examples/ts`. For `examples/ts`: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1. The CLI does not need Node.
 - In GitHub Actions the interpreter is `python`. Some Linux machines, including the one used to check the docs, have `python3` and do not have `python`.
 
 From a checkout:

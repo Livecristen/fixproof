@@ -20,7 +20,7 @@ The log makes a hand-edited report visible: `validate` rejects a status that doe
 
 Install by cloning the repository into the agent skill folder (Claude Code, Codex, or Cursor). The README has the commands. Then run `scripts/verify.py --version`.
 
-The Python, JavaScript, and TypeScript examples are in `examples/` and are run by `examples/run_example.py`. The TypeScript example needs Node with unflagged built-in type stripping (Node 22.18 or newer, or 23.6 or newer; tested on 22.23.4 and 24.22.1).
+The Python, JavaScript, and TypeScript examples are in `examples/` and are run by `examples/run_example.py`. The TypeScript example: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1.
 
 Known limits, spelled out in the README: the project must be a git repository; test paths and fix paths are split by globs; suite results are per command; the in-place revert test edits the working tree until restore finishes.
 

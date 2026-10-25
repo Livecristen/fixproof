@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Docs: one Node statement for the TypeScript example everywhere: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1. Matrix: 22.17.1 FAILED, 22.18.0 VERIFIED, 23.5.0 FAILED, 23.6.0 VERIFIED, 24.22.1 VERIFIED.
+
 ## 0.3.0 (2026-10-25)
 
 Final release of the 0.3.0-rc1 candidate, with no CLI behavior change against rc1.
