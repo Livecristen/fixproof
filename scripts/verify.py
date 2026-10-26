@@ -696,16 +696,27 @@ def cmd_init(args):
     os.makedirs(sd, exist_ok=True)
     excl = os.path.join(git(root, "rev-parse", "--git-dir").strip(), "info", "exclude")
     excl = excl if os.path.isabs(excl) else os.path.join(root, excl)
-    os.makedirs(os.path.dirname(excl), exist_ok=True)
-    existing = open(excl, encoding="utf-8").read() if os.path.exists(excl) else ""
-    if STATE_DIR + "/" not in existing.split():
-        with open(excl, "a", encoding="utf-8") as fh:
-            fh.write("\n" + STATE_DIR + "/\n")
+    ignored = subprocess.run(["git", "-C", root, "check-ignore", "-q", STATE_DIR + "/"],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode == 0
+    if not ignored:
+        try:
+            os.makedirs(os.path.dirname(excl), exist_ok=True)
+            existing = open(excl, encoding="utf-8").read() if os.path.exists(excl) else ""
+            if STATE_DIR + "/" not in existing.split():
+                with open(excl, "a", encoding="utf-8") as fh:
+                    fh.write("\n" + STATE_DIR + "/\n")
+        except OSError as e:
+            print("FixProof: WARNING - could not add %s/ to %s (%s). Add %s/ to .gitignore so the evidence "
+                  "stays out of git status." % (STATE_DIR, excl, e.strerror or e, STATE_DIR))
     log = Log(root)
     try:
         tree = snapshot_tree(root)
     except GitError as e:
-        print("FixProof: BLOCKED - cannot snapshot tree: %s" % e)
+        hint = ""
+        if "denied" in str(e).lower() or "read-only" in str(e).lower():
+            hint = " (the .git directory must be writable: FixProof stores tree snapshots as git objects; " \
+                   "an agent sandbox that mounts .git read-only blocks this)"
+        print("FixProof: BLOCKED - cannot snapshot tree: %s%s" % (e, hint))
         return EXIT["BLOCKED"]
     head = git(root, "rev-parse", "HEAD", check=False).strip()
     state = {"version": VERSION, "repro": args.repro, "suite": args.suite or [],
