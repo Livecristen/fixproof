@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fix: `init` no longer crashes with a traceback when `.git/info/exclude` is not writable (for example in an agent sandbox that mounts `.git` read-only). It warns instead, and skips the write when `.fixproof/` is already ignored, for example via `.gitignore`. If git cannot write objects at all, the BLOCKED message now says that `.git` must be writable. Found in a real Codex CLI run on Windows.
+- Fix: `init` no longer crashes with a traceback when `.git/info/exclude` is not writable (for example in an agent sandbox that mounts `.git` without write access). It warns instead, and skips the write when `.fixproof/` is already ignored, for example via `.gitignore`. If git cannot write objects at all, the BLOCKED message now says that `.git` must be writable. Found in a real Codex CLI run on Windows.
 - Docs: Windows PowerShell 5.1 install. `~` is not expanded for `git clone`, so the README now shows a `$HOME` variant.
 - Docs: one Node statement for the TypeScript example everywhere: Tested with Node 22.18.0+ / 23.6.0+ / 24.x (unflagged type stripping); CI uses 24.22.1. Matrix: 22.17.1 FAILED, 22.18.0 VERIFIED, 23.5.0 FAILED, 23.6.0 VERIFIED, 24.22.1 VERIFIED.
 
