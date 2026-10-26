@@ -1,6 +1,7 @@
 """Executed scenario tests for FixProof. Each test builds a throwaway git repo."""
 import json
 import os
+import stat
 import shutil
 import subprocess
 import sys
@@ -209,6 +210,35 @@ class Scenarios(Base):
 
 
 class Guards(Base):
+    def _exclude(self):
+        return os.path.join(self.root, ".git", "info", "exclude")
+
+    def test_readonly_git_exclude_is_warning_not_crash(self):
+        if hasattr(os, "geteuid") and os.geteuid() == 0:
+            self.skipTest("root ignores file permissions")
+        self.std_repo()
+        excl = self._exclude()
+        os.makedirs(os.path.dirname(excl), exist_ok=True)
+        write(self.root, os.path.join(".git", "info", "exclude"), "# empty\n")
+        os.chmod(excl, stat.S_IREAD)
+        try:
+            rc, out = self.fp("init", "--repro", REPRO, "--suite", SUITE)
+        finally:
+            os.chmod(excl, stat.S_IREAD | stat.S_IWRITE)
+        self.assertEqual(rc, 0, out)
+        self.assertIn("WARNING - could not add .fixproof/", out)
+        self.assertNotIn("Traceback", out)
+
+    def test_gitignore_entry_skips_exclude_write(self):
+        self.commit({"calc.py": BUGGY, "test_calc.py": TEST_ADD, "test_other.py": TEST_SUB,
+                     ".gitignore": ".fixproof/\n"})
+        excl = self._exclude()
+        before = open(excl, encoding="utf-8").read() if os.path.exists(excl) else None
+        rc, out = self.fp("init", "--repro", REPRO, "--suite", SUITE)
+        self.assertEqual(rc, 0, out)
+        after = open(excl, encoding="utf-8").read() if os.path.exists(excl) else None
+        self.assertEqual(before, after)
+
     def test_12_tampered_report(self):
         self.std_repo()
         self.fp("init", "--repro", REPRO, "--suite", SUITE)
