@@ -35,6 +35,8 @@ Stop trusting AI fixes. Start verifying them. **The CLI checks the evidence, not
 
 Exit codes: 0 VERIFIED, 1 FAILED, 2 PARTIALLY VERIFIED, 3 UNVERIFIED, 4 BLOCKED, 5 tree restore error, 64 usage error.
 A restore mismatch keeps the status string BLOCKED and uses exit 5.
+Report the exit code of `verify.py` itself (run it as its own command), not the exit code of a wrapping shell; PowerShell `-Command` turns any failing native exit into 1.
+FixProof writes git objects into `.git`. A sandbox that mounts `.git` without write access gives BLOCKED at `init`; report that BLOCKED, do not work around it in a copy of the repo.
 `validate` exits 0 when the report matches its records, including when that status is not VERIFIED. It exits 3 when the chain, the status, or the exit code does not follow from the records.
 
 ## Rules for the agent

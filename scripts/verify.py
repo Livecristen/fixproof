@@ -713,7 +713,7 @@ def cmd_init(args):
         tree = snapshot_tree(root)
     except GitError as e:
         hint = ""
-        if "denied" in str(e).lower() or "read-only" in str(e).lower():
+        if any(w in str(e).lower() for w in ("denied", "permission", "read-only")):
             hint = " (the .git directory must be writable: FixProof stores tree snapshots as git objects; " \
                    "an agent sandbox that mounts .git read-only blocks this)"
         print("FixProof: BLOCKED - cannot snapshot tree: %s%s" % (e, hint))
